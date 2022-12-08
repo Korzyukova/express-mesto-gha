@@ -32,9 +32,17 @@ module.exports.createCard = (req, res) => {
   }
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send({ data: card }))
-    .catch(() =>
-      res.status(500).send({ message: "Запрашиваемый пользователь не найден" })
-    );
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res
+          .status(400)
+          .send({ message: "Запрашиваемый пользователь не найден" });
+      } else {
+        res
+          .status(500)
+          .send({ message: "Запрашиваемый пользователь не найден" });
+      }
+    });
 };
 
 module.exports.likeCard = (req, res) => {
@@ -57,8 +65,8 @@ module.exports.likeCard = (req, res) => {
 };
 
 module.exports.dislikeCard = (req, res) => {
-  if (!req.user._id){
-    res.status(400).send({ message: "Запрашиваемый пользователь не найден" })
+  if (!req.user._id) {
+    res.status(400).send({ message: "Запрашиваемый пользователь не найден" });
   }
   Card.findByIdAndUpdate(
     req.params.cardId,
