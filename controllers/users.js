@@ -8,7 +8,7 @@ module.exports.getUsers = (req, res) => {
           .status(404)
           .send({ message: "Запрашиваемый пользователь не найден" });
       }
-      res.send({ data: users });
+      res.send({ ...users });
     })
     .catch(() =>
       res.status(500).send({ message: "Запрашиваемый пользователь не найден" })
@@ -16,7 +16,7 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUserId = (req, res) => {
-  User.find({
+  User.findOne({
     _id: req.params.userId,
   })
     .then((users) => {
@@ -25,7 +25,7 @@ module.exports.getUserId = (req, res) => {
           message: "Переданы некорректные данные при создании пользователя.",
         });
       }
-      res.send({ data: users });
+      res.send({ ...users._doc });
     })
     .catch(() =>
       res.status(500).send({ message: "Запрашиваемый пользователь не найден" })
