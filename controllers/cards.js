@@ -66,8 +66,12 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.likeCard = (req, res) => {
+  const cardId = req.params.cardId;
+  if (!mongoose.Types.ObjectId.isValid(cardId)) {
+    res.status(400).send({ message: "Запрашиваемый пользователь не найден" });
+  }
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true }
   )
@@ -92,11 +96,12 @@ module.exports.likeCard = (req, res) => {
 };
 
 module.exports.dislikeCard = (req, res) => {
-  if (!req.user._id) {
+  const cardId = req.params.cardId;
+  if (!mongoose.Types.ObjectId.isValid(cardId)) {
     res.status(400).send({ message: "Запрашиваемый пользователь не найден" });
   }
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true }
   )
