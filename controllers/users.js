@@ -41,7 +41,7 @@ module.exports.getUserId = (req, res) => {
           .status(404)
           .send({ message: "Запрашиваемый пользователь не найден" });
       }
-      res.send({ data: users });
+      res.send(users[0]);
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
