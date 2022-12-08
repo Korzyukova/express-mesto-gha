@@ -29,8 +29,12 @@ module.exports.getCards = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
+  const cardId = req.params.cardId;
+  if (!mongoose.Types.ObjectId.isValid(cardId)) {
+    res.status(400).send({ message: "Запрашиваемый пользователь не найден" });
+  }
   Card.deleteOne({
-    _id: req.params.cardId,
+    _id: cardId,
   })
     .then((cards) => res.send({ data: cards }))
     .catch((err) => {
