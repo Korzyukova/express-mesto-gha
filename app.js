@@ -17,9 +17,9 @@ app.use(routes);
 
 const { PORT = 3000 } = process.env;
 
-mongoose.connect("mongodb://localhost:27017/mestodb").then(() => {
-  app.listen(PORT, () => {
-    // Если всё работает, консоль покажет, какой порт приложение слушает
-    console.log(`App listening on port ${PORT}`);
-  });
+mongoose.connect("mongodb://localhost:27017/mestodb");
+
+app.listen(PORT, () => {
+  // Если всё работает, консоль покажет, какой порт приложение слушает
+  console.log(`App listening on port ${PORT}`);
 });
