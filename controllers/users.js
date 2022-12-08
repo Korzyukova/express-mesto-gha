@@ -97,8 +97,9 @@ module.exports.updateUserAvatar = (req, res) => {
   if (!req.body.avatar) {
     res.status(400).send({ message: "Запрашиваемый пользователь не найден" });
   }
-  User.updateOne({ _id: req.user._id }, { avatar: req.body.avatar })
-    .then((user) => res.send({ data: user }))
+  const update = { avatar: req.body.avatar };
+  User.updateOne({ _id: req.user._id }, update)
+    .then((user) => res.send(update))
     .catch((err) => {
       if (err.name === "ValidationError") {
         res
