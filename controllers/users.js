@@ -27,7 +27,7 @@ module.exports.getUserId = (req, res) => {
     _id: req.params.userId,
   })
     .then((users) => {
-      res.send({ data: user });
+      res.send({ data: users });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
