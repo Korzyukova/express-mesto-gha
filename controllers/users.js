@@ -3,11 +3,6 @@ const User = require("../models/user");
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => {
-      if (users.length < 1) {
-        res
-          .status(404)
-          .send({ message: "Запрашиваемый пользователь не найден" });
-      }
       res.send({ data: users });
     })
     .catch((err) => {
@@ -53,11 +48,6 @@ module.exports.getUserId = (req, res) => {
 
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
-  if (!name || !about || !avatar) {
-    res.status(400).send({
-      message: "Переданы некорректные данные при создании пользователя.",
-    });
-  }
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
@@ -123,7 +113,7 @@ module.exports.updateUserAvatar = (req, res) => {
   }
   const update = { avatar: req.body.avatar };
   User.updateOne({ _id: req.user._id }, update, { runValidators: true })
-    .then((user) => res.send(update))
+    .then((user) => res.status(200).send(update))
     .catch((err) => {
       if (err.name === "ValidationError") {
         res

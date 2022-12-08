@@ -3,11 +3,6 @@ const Card = require("../models/card");
 module.exports.getCards = (req, res) => {
   Card.find()
     .then((cards) => {
-      if (cards.length < 1) {
-        res
-          .status(404)
-          .send({ message: "Запрашиваемый пользователь не найден" });
-      }
       res.send({ data: cards });
     })
     .catch((err) => {
@@ -51,9 +46,6 @@ module.exports.deleteCard = (req, res) => {
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
-  if (!name || !link) {
-    res.status(400).send({ message: "Запрашиваемый пользователь не найден" });
-  }
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
@@ -80,11 +72,6 @@ module.exports.likeCard = (req, res) => {
     { new: true }
   )
     .then((cards) => {
-      if (cards.length < 1) {
-        res
-          .status(404)
-          .send({ message: "Запрашиваемый пользователь не найден" });
-      }
       res.send({ data: cards });
     })
     .catch((err) => {
@@ -114,11 +101,6 @@ module.exports.dislikeCard = (req, res) => {
     { new: true }
   )
     .then((cards) => {
-      if (cards.length < 1) {
-        res
-          .status(404)
-          .send({ message: "Запрашиваемый пользователь не найден" });
-      }
       res.send({ data: cards });
     })
     .catch((err) => {
