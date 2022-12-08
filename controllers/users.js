@@ -78,7 +78,7 @@ module.exports.updateUser = (req, res) => {
     update.avatar = avatar;
   }
 
-  User.updateOne({ _id: req.user._id }, update)
+  User.updateOne({ _id: req.user._id }, update, {runValidators: true})
     .then((user) => res.send({ ...update }))
     .catch((err) => {
       if (err.name === "ValidationError") {
@@ -98,7 +98,7 @@ module.exports.updateUserAvatar = (req, res) => {
     res.status(400).send({ message: "Запрашиваемый пользователь не найден" });
   }
   const update = { avatar: req.body.avatar };
-  User.updateOne({ _id: req.user._id }, update)
+  User.updateOne({ _id: req.user._id }, update, {runValidators: true})
     .then((user) => res.send(update))
     .catch((err) => {
       if (err.name === "ValidationError") {
