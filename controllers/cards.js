@@ -10,9 +10,21 @@ module.exports.getCards = (req, res) => {
       }
       res.send({ data: cards });
     })
-    .catch(() =>
-      res.status(500).send({ message: "Запрашиваемый пользователь не найден" })
-    );
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res
+          .status(400)
+          .send({ message: "Запрашиваемый пользователь не найден" });
+      } else if (err.name === "CastError") {
+        res.status(404).send({
+          message: "Переданы некорректные данные при создании пользователя.",
+        });
+      } else {
+        res
+          .status(500)
+          .send({ message: "Запрашиваемый пользователь не найден" });
+      }
+    });
 };
 
 module.exports.deleteCard = (req, res) => {
@@ -25,6 +37,10 @@ module.exports.deleteCard = (req, res) => {
         res
           .status(400)
           .send({ message: "Запрашиваемый пользователь не найден" });
+      } else if (err.name === "CastError") {
+        res.status(404).send({
+          message: "Переданы некорректные данные при создании пользователя.",
+        });
       } else {
         res
           .status(500)
@@ -45,6 +61,10 @@ module.exports.createCard = (req, res) => {
         res
           .status(400)
           .send({ message: "Запрашиваемый пользователь не найден" });
+      } else if (err.name === "CastError") {
+        res.status(404).send({
+          message: "Переданы некорректные данные при создании пользователя.",
+        });
       } else {
         res
           .status(500)
@@ -72,6 +92,10 @@ module.exports.likeCard = (req, res) => {
         res
           .status(400)
           .send({ message: "Запрашиваемый пользователь не найден" });
+      } else if (err.name === "CastError") {
+        res.status(404).send({
+          message: "Переданы некорректные данные при создании пользователя.",
+        });
       } else {
         res
           .status(500)
@@ -102,6 +126,10 @@ module.exports.dislikeCard = (req, res) => {
         res
           .status(400)
           .send({ message: "Запрашиваемый пользователь не найден" });
+      } else if (err.name === "CastError") {
+        res.status(404).send({
+          message: "Переданы некорректные данные при создании пользователя.",
+        });
       } else {
         res
           .status(500)
