@@ -16,20 +16,21 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUserId = (req, res) => {
-  User.findOne({
+  User.find({
     _id: req.params.userId,
   })
     .then((users) => {
-      if (users.length < 1) {
-        res.status(404).send({
+      res.send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === "CastError") {
+        res.status(400).send({
           message: "Переданы некорректные данные при создании пользователя.",
         });
+      } else {
+        res.status(500).send({ message: "Запрашиваемый пользователь не найден" });
       }
-      res.send({ ...users._doc });
-    })
-    .catch(() =>
-      res.status(500).send({ message: "Запрашиваемый пользователь не найден" })
-    );
+    });
 };
 
 module.exports.createUser = (req, res) => {
