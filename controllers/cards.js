@@ -82,6 +82,9 @@ module.exports.likeCard = (req, res) => {
     { new: true }
   )
     .then((cards) => {
+      if (!cards) {
+        res.status(404).send("Пользователь не найден");
+      }
       res.send({ data: cards });
     })
     .catch((err) => {
@@ -112,6 +115,9 @@ module.exports.dislikeCard = (req, res) => {
     { new: true }
   )
     .then((cards) => {
+      if (!cards) {
+        res.status(404).send("Пользователь не найден");
+      }
       res.send({ data: cards });
     })
     .catch((err) => {

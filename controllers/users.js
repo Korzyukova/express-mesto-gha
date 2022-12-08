@@ -36,6 +36,9 @@ module.exports.getUserId = (req, res) => {
     _id: req.params.userId,
   })
     .then((users) => {
+      if (users.length < 1) {
+        res.status(404).send("Пользователь не найден");
+      }
       res.send({ data: users });
     })
     .catch((err) => {
