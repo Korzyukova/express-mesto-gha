@@ -20,9 +20,17 @@ module.exports.deleteCard = (req, res) => {
     _id: req.params.cardId,
   })
     .then((cards) => res.send({ data: cards }))
-    .catch(() =>
-      res.status(500).send({ message: "Запрашиваемый пользователь не найден" })
-    );
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res
+          .status(400)
+          .send({ message: "Запрашиваемый пользователь не найден" });
+      } else {
+        res
+          .status(500)
+          .send({ message: "Запрашиваемый пользователь не найден" });
+      }
+    });
 };
 
 module.exports.createCard = (req, res) => {
