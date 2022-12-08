@@ -6,7 +6,7 @@ module.exports.getCards = (req, res) => {
   Card.find()
     .then((cards) => {
       if (card.length < 1) {
-        res.status(404).send("Пользователь не найден");
+        res.status(404).send({message: "Пользователь не найден"});
       }
 
       res.send({ data: cards });
@@ -87,7 +87,7 @@ module.exports.likeCard = (req, res) => {
   )
     .then((cards) => {
       if (!cards) {
-        res.status(404).send("Пользователь не найден");
+        res.status(404).send({message: "Пользователь не найден"});
       }
       res.send({ data: cards });
     })
@@ -120,7 +120,7 @@ module.exports.dislikeCard = (req, res) => {
   )
     .then((cards) => {
       if (!cards) {
-        res.status(404).send("Пользователь не найден");
+        res.status(404).send({message: "Пользователь не найден"});
       }
       res.send({ data: cards });
     })
