@@ -5,7 +5,7 @@ module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => {
       if (users.length < 1) {
-        res.status(404).send({message: "Пользователь не найден"});
+        res.status(404).send({ message: "Пользователь не найден" });
       }
 
       res.send({ data: users });
@@ -37,7 +37,9 @@ module.exports.getUserId = (req, res) => {
   })
     .then((users) => {
       if (users.length < 1) {
-        res.status(404).send("Пользователь не найден");
+        res
+          .status(404)
+          .send({ message: "Запрашиваемый пользователь не найден" });
       }
       res.send({ data: users });
     })
