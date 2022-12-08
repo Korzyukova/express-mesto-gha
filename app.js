@@ -13,6 +13,9 @@ app.use((req, res, next) => {
   next();
 });
 app.use(routes);
+app.all("*", (req, res) => {
+  res.status(404).send({});
+});
 
 const { PORT = 3000 } = process.env;
 
