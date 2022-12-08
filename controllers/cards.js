@@ -1,7 +1,7 @@
 const Card = require("../models/card");
 
 module.exports.getCards = (req, res) => {
-  Card.find({})
+  Card.find()
     .then((cards) => {
       if (cards.length < 1) {
         res
