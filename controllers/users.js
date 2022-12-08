@@ -17,7 +17,7 @@ module.exports.getUserId = (req, res) => {
   })
     .then((users) => {
       if (users.length < 1){
-        res.status(404).send({ message: "Запрашиваемый пользователь не найден" });
+        res.status(400).send({ message: "Переданы некорректные данные при создании пользователя." });
       }
       res.send({ data: users })
     })
@@ -27,7 +27,7 @@ module.exports.getUserId = (req, res) => {
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   if (!name || !about || !avatar) {
-    res.status(400).send({ message: "Запрашиваемый пользователь не найден" });
+    res.status(400).send({ message: "Переданы некорректные данные при создании пользователя." });
   }
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
