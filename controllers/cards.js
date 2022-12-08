@@ -1,8 +1,14 @@
+const { default: mongoose } = require("mongoose");
+const card = require("../models/card");
 const Card = require("../models/card");
 
 module.exports.getCards = (req, res) => {
   Card.find()
     .then((cards) => {
+      if (card.length < 1) {
+        res.status(404).send("Пользователь не найден");
+      }
+
       res.send({ data: cards });
     })
     .catch((err) => {

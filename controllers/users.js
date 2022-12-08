@@ -4,6 +4,10 @@ const User = require("../models/user");
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => {
+      if (users.length < 1) {
+        res.status(404).send("Пользователь не найден");
+      }
+
       res.send({ data: users });
     })
     .catch((err) => {
@@ -77,10 +81,6 @@ module.exports.updateUser = (req, res) => {
 
   const { name, about, avatar } = req.body;
 
-  if (!name && !about && !avatar) {
-    res.status(400).send({ message: "Запрашиваемый пользователь не найден" });
-  }
-
   if (name) {
     update.name = name;
   }
@@ -94,7 +94,7 @@ module.exports.updateUser = (req, res) => {
   }
 
   User.updateOne({ _id: req.user._id }, update, { runValidators: true })
-    .then((user) => res.send({ ...update }))
+    .then((user) => res.send(update))
     .catch((err) => {
       if (err.name === "ValidationError") {
         res
@@ -113,9 +113,6 @@ module.exports.updateUser = (req, res) => {
 };
 
 module.exports.updateUserAvatar = (req, res) => {
-  if (!req.body.avatar) {
-    res.status(400).send({ message: "Запрашиваемый пользователь не найден" });
-  }
   const update = { avatar: req.body.avatar };
   User.updateOne({ _id: req.user._id }, update, { runValidators: true })
     .then((user) => res.status(200).send(update))
