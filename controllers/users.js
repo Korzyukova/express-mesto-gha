@@ -28,7 +28,9 @@ module.exports.getUserId = (req, res) => {
           message: "Переданы некорректные данные при создании пользователя.",
         });
       } else {
-        res.status(500).send({ message: "Запрашиваемый пользователь не найден" });
+        res
+          .status(500)
+          .send({ message: "Запрашиваемый пользователь не найден" });
       }
     });
 };
@@ -76,20 +78,36 @@ module.exports.updateUser = (req, res) => {
     update.avatar = avatar;
   }
 
-  User.findOneAndUpdate({ _id: req.user._id }, update)
-    .then((user) => res.send({ data: user }))
-    .catch(() =>
-      res.status(500).send({ message: "Запрашиваемый пользователь не найден" })
-    );
+  User.updateOne({ _id: req.user._id }, update)
+    .then((user) => res.send({ ...update }))
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res
+          .status(400)
+          .send({ message: "Запрашиваемый пользователь не найден" });
+      } else {
+        res
+          .status(500)
+          .send({ message: "Запрашиваемый пользователь не найден" });
+      }
+    });
 };
 
 module.exports.updateUserAvatar = (req, res) => {
   if (!req.body.avatar) {
     res.status(400).send({ message: "Запрашиваемый пользователь не найден" });
   }
-  User.findOneAndUpdate({ _id: req.user._id }, { avatar: req.body.avatar })
+  User.updateOne({ _id: req.user._id }, { avatar: req.body.avatar })
     .then((user) => res.send({ data: user }))
-    .catch(() =>
-      res.status(500).send({ message: "Запрашиваемый пользователь не найден" })
-    );
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res
+          .status(400)
+          .send({ message: "Запрашиваемый пользователь не найден" });
+      } else {
+        res
+          .status(500)
+          .send({ message: "Запрашиваемый пользователь не найден" });
+      }
+    });
 };
