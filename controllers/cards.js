@@ -1,5 +1,4 @@
 const { default: mongoose } = require('mongoose');
-const card = require('../models/card');
 const Card = require('../models/card');
 
 function notFound404(res) {
@@ -82,9 +81,6 @@ module.exports.likeCard = (req, res) => {
       .catch((err) => {
         if (err.name === 'CastError') {
           notFound400(res);
-        } else {
-          notFound500(res);
-        }
       });
   }
 };
