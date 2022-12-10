@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const express = require('express');
 const mongoose = require('mongoose');
 const routes = require('./routes');
@@ -20,7 +21,7 @@ app.all('*', (req, res) => {
 const { PORT = 3000 } = process.env;
 
 app.listen(PORT, () => {
-
+  console.log(`Listening on port ${PORT}`);
 });
 
 mongoose.connect('mongodb://localhost:27017/mestodb');

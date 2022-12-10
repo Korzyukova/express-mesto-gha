@@ -78,7 +78,7 @@ module.exports.updateUser = (req, res) => {
     update.about = about;
   }
 
-  User.updateOne({ _id: req.user._id }, update, { runValidators: true })
+  User.updateOne({ _id: req.user._id }, update, { runValidators: true, new: true })
     .then(() => res.send(update))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -93,13 +93,12 @@ module.exports.updateUser = (req, res) => {
 
 module.exports.updateUserAvatar = (req, res) => {
   const update = { avatar: req.body.avatar };
-  User.updateOne(
+  User.findOneAndUpdate(
     { _id: req.user._id },
     update,
-    { runValidators: true },
-    { new: true },
+    { runValidators: true, new: true },
   )
-    .then(() => res.status(200).send(update))
+    .then((data) => { res.send(data); })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         notFound400(res);
