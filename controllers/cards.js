@@ -28,7 +28,7 @@ module.exports.getCards = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  const cardId = req.params.cardId;
+  const { cardId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
     notFound400(res);
   }
@@ -64,7 +64,7 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.likeCard = (req, res) => {
-  const cardId = req.params.cardId;
+  const { cardId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
     notFound400(res);
   }
@@ -89,7 +89,7 @@ module.exports.likeCard = (req, res) => {
 };
 
 module.exports.dislikeCard = (req, res) => {
-  const cardId = req.params.cardId;
+  const { cardId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
     notFound400(res);
   }

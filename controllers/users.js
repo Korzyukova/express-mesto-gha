@@ -28,7 +28,7 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUserId = (req, res) => {
-  const userId = req.params.userId;
+  const { userId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     notFound400(res);
   }
