@@ -1,6 +1,6 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const routes = require("./routes");
+const express = require('express');
+const mongoose = require('mongoose');
+const routes = require('./routes');
 
 const app = express();
 app.use(express.json());
@@ -24,4 +24,4 @@ app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
 });
 
-mongoose.connect("mongodb://localhost:27017/mestodb");
+mongoose.connect('mongodb://localhost:27017/mestodb');
