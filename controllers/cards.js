@@ -80,7 +80,7 @@ module.exports.likeCard = (req, res) => {
       res.send({ data: cards });
     })
     .catch((err) => {
-      if (err.name === "CastError") {
+      if (err.name === 'CastError') {
         notFound400(res);
       } else {
         notFound500(res);
