@@ -2,15 +2,15 @@ const { default: mongoose } = require("mongoose");
 const User = require("../models/user");
 
 const notFound404 = (res) => {
-  res.status(404).send({ message: "Пользователь не найден" });
+  res.status(404).send({ message: 'Пользователь не найден' });
 };
 const notFound400 = (res) => {
   res.status(400).send({
-    message: "Переданы некорректные данные при создании пользователя",
+    message: 'Переданы некорректные данные при создании пользователя',
   });
 };
 const notFound500 = (res) => {
-  res.status(500).send({ message: "Ошибка по умолчанию" });
+  res.status(500).send({ message: 'Ошибка по умолчанию' });
 };
 
 module.exports.getUsers = (req, res) => {

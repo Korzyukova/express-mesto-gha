@@ -3,15 +3,15 @@ const card = require("../models/card");
 const Card = require("../models/card");
 
 const notFound404 = (res) => {
-  res.status(404).send({ message: "Пользователь с указанным _id не найден" });
+  res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
 };
 const notFound400 = (res) => {
   res.status(400).send({
-    message: "Переданы некорректные данные при создании карточки",
+    message: 'Переданы некорректные данные при создании карточки',
   });
 };
 const notFound500 = (res) => {
-  res.status(500).send({ message: "Ошибка по умолчанию" });
+  res.status(500).send({ message: 'Ошибка по умолчанию' });
 };
 
 module.exports.getCards = (req, res) => {
