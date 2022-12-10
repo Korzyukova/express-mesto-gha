@@ -81,6 +81,7 @@ module.exports.likeCard = (req, res) => {
       .catch((err) => {
         if (err.name === 'CastError') {
           notFound400(res);
+        }
       });
   }
 };
