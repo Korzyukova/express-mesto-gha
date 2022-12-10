@@ -78,7 +78,7 @@ module.exports.updateUser = (req, res) => {
     update.about = about;
   }
 
-  User.updateOne({ _id: req.user._id }, update, { runValidators: true, new: true })
+  User.findOneAndUpdate({ _id: req.user._id }, update, { runValidators: true, new: true })
     .then(() => res.send(update))
     .catch((err) => {
       if (err.name === 'ValidationError') {
