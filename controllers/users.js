@@ -36,7 +36,7 @@ module.exports.getUserId = (req, res) => {
       _id: userId,
     })
       .then((users) => {
-        if (users.length < 1) {
+        if (!users) {
           notFound404(res);
         } else {
           res.send(users);
