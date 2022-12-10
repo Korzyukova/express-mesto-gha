@@ -19,8 +19,9 @@ module.exports.getCards = (req, res) => {
     .then((cards) => {
       if (card.length < 1) {
         notFound404(res);
+      } else {
+        res.send({ data: cards });
       }
-      res.send({ data: cards });
     })
     .catch(() => {
       notFound500(res);
@@ -31,23 +32,24 @@ module.exports.deleteCard = (req, res) => {
   const { cardId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
     notFound400(res);
-  }
-  Card.deleteOne({
-    _id: cardId,
-  })
-    .then((cards) => {
-      if (cards.deletedCount === 0) {
-        notFound404(res);
-      }
-      res.send({ data: cards });
+  } else {
+    Card.deleteOne({
+      _id: cardId,
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        notFound400(res);
-      } else {
-        notFound500(res);
-      }
-    });
+      .then((cards) => {
+        if (cards.deletedCount === 0) {
+          notFound404(res);
+        }
+        res.send({ data: cards });
+      })
+      .catch((err) => {
+        if (err.name === 'CastError') {
+          notFound400(res);
+        } else {
+          notFound500(res);
+        }
+      });
+  }
 };
 
 module.exports.createCard = (req, res) => {
@@ -67,48 +69,50 @@ module.exports.likeCard = (req, res) => {
   const { cardId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
     notFound400(res);
+  } else {
+    Card.findByIdAndUpdate(
+      cardId,
+      { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
+      { new: true },
+    )
+      .then((cards) => {
+        if (!cards) {
+          notFound404(res);
+        }
+        res.send({ data: cards });
+      })
+      .catch((err) => {
+        if (err.name === 'CastError') {
+          notFound400(res);
+        } else {
+          notFound500(res);
+        }
+      });
   }
-  Card.findByIdAndUpdate(
-    cardId,
-    { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
-    { new: true },
-  )
-    .then((cards) => {
-      if (!cards) {
-        notFound404(res);
-      }
-      res.send({ data: cards });
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        notFound400(res);
-      } else {
-        notFound500(res);
-      }
-    });
 };
 
 module.exports.dislikeCard = (req, res) => {
   const { cardId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
     notFound400(res);
+  } else {
+    Card.findByIdAndUpdate(
+      cardId,
+      { $pull: { likes: req.user._id } }, // убрать _id из массива
+      { new: true },
+    )
+      .then((cards) => {
+        if (!cards) {
+          notFound404(res);
+        }
+        res.send({ data: cards });
+      })
+      .catch((err) => {
+        if (err.name === 'CastError') {
+          notFound400(res);
+        } else {
+          notFound500(res);
+        }
+      });
   }
-  Card.findByIdAndUpdate(
-    cardId,
-    { $pull: { likes: req.user._id } }, // убрать _id из массива
-    { new: true },
-  )
-    .then((cards) => {
-      if (!cards) {
-        notFound404(res);
-      }
-      res.send({ data: cards });
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        notFound400(res);
-      } else {
-        notFound500(res);
-      }
-    });
 };
