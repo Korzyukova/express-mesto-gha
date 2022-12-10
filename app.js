@@ -13,7 +13,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use(routes);
-app.all("*", (req, res) => {
+app.all('*', (req, res) => {
   res.status(404).send({ message: 'Не найдено' });
 });
 
