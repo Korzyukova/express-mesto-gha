@@ -1,5 +1,5 @@
-const { default: mongoose } = require("mongoose");
-const User = require("../models/user");
+const { default: mongoose } = require('mongoose');
+const User = require('../models/user');
 
 const notFound404 = (res) => {
   res.status(404).send({ message: 'Пользователь не найден' });
@@ -42,7 +42,7 @@ module.exports.getUserId = (req, res) => {
       res.send(users[0]);
     })
     .catch((err) => {
-      if (err.name === "CastError") {
+      if (err.name === 'CastError') {
         notFound400(res);
       } else {
         notFound500(res);
@@ -55,7 +55,7 @@ module.exports.createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === 'ValidationError') {
         notFound400(res);
       } else {
         notFound500(res);
@@ -79,9 +79,9 @@ module.exports.updateUser = (req, res) => {
   User.updateOne({ _id: req.user._id }, update, { runValidators: true })
     .then((user) => res.send(update))
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === 'ValidationError') {
         notFound400(res);
-      } else if (err.name === "CastError") {
+      } else if (err.name === 'CastError') {
         notFound400(res);
       } else {
         notFound500(res);
@@ -99,9 +99,9 @@ module.exports.updateUserAvatar = (req, res) => {
   )
     .then((user) => res.status(200).send(update))
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === 'ValidationError') {
         notFound400(res);
-      } else if (err.name === "CastError") {
+      } else if (err.name === 'CastError') {
         notFound400(res);
       } else {
         notFound500(res);
