@@ -14,13 +14,13 @@ const notFound500 = (res) => {
 };
 
 module.exports.getUsers = (req, res) => {
-  User.find({})
+  User.find()
     .then((users) => {
       if (users.length < 1) {
         notFound404(res);
+      } else {
+        res.send({ data: users });
       }
-
-      res.send({ data: users });
     })
     .catch(() => {
       notFound500(res);
@@ -31,23 +31,24 @@ module.exports.getUserId = (req, res) => {
   const { userId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     notFound400(res);
-  }
-  User.findById({
-    _id: req.params.userId,
-  })
-    .then((users) => {
-      if (users.length < 1) {
-        notFound404(res);
-      }
-      res.send(users[0]);
+  } else {
+    User.findById({
+      _id: userId,
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        notFound400(res);
-      } else {
-        notFound500(res);
-      }
-    });
+      .then((users) => {
+        if (users.length < 1) {
+          notFound404(res);
+        }
+        res.send(users);
+      })
+      .catch((err) => {
+        if (err.name === 'CastError') {
+          notFound400(res);
+        } else {
+          notFound500(res);
+        }
+      });
+  }
 };
 
 module.exports.createUser = (req, res) => {
