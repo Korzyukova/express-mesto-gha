@@ -38,8 +38,9 @@ module.exports.getUserId = (req, res) => {
       .then((users) => {
         if (users.length < 1) {
           notFound404(res);
+        } else {
+          res.send(users);
         }
-        res.send(users);
       })
       .catch((err) => {
         if (err.name === 'CastError') {

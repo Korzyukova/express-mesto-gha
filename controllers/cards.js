@@ -39,8 +39,9 @@ module.exports.deleteCard = (req, res) => {
       .then((cards) => {
         if (cards.deletedCount === 0) {
           notFound404(res);
+        } else {
+          res.send({ data: cards });
         }
-        res.send({ data: cards });
       })
       .catch((err) => {
         if (err.name === 'CastError') {
@@ -78,8 +79,9 @@ module.exports.likeCard = (req, res) => {
       .then((cards) => {
         if (!cards) {
           notFound404(res);
+        } else {
+          res.send({ data: cards });
         }
-        res.send({ data: cards });
       })
       .catch((err) => {
         if (err.name === 'CastError') {
@@ -104,8 +106,9 @@ module.exports.dislikeCard = (req, res) => {
       .then((cards) => {
         if (!cards) {
           notFound404(res);
+        } else {
+          res.send({ data: cards });
         }
-        res.send({ data: cards });
       })
       .catch((err) => {
         if (err.name === 'CastError') {
