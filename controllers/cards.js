@@ -22,7 +22,7 @@ module.exports.getCards = (req, res) => {
       }
       res.send({ data: cards });
     })
-    .catch((err) => {
+    .catch(() => {
       notFound500(res);
     });
 };
@@ -53,7 +53,7 @@ module.exports.deleteCard = (req, res) => {
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.send({ data: card }))
+    .then(() => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         notFound400(res);
@@ -71,7 +71,7 @@ module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
-    { new: true }
+    { new: true },
   )
     .then((cards) => {
       if (!cards) {
@@ -96,7 +96,7 @@ module.exports.dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
-    { new: true }
+    { new: true },
   )
     .then((cards) => {
       if (!cards) {

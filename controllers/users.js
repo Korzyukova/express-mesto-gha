@@ -22,7 +22,7 @@ module.exports.getUsers = (req, res) => {
 
       res.send({ data: users });
     })
-    .catch((err) => {
+    .catch(() => {
       notFound500(res);
     });
 };
@@ -77,7 +77,7 @@ module.exports.updateUser = (req, res) => {
   }
 
   User.updateOne({ _id: req.user._id }, update, { runValidators: true })
-    .then((user) => res.send(update))
+    .then(() => res.send(update))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         notFound400(res);
@@ -95,9 +95,9 @@ module.exports.updateUserAvatar = (req, res) => {
     { _id: req.user._id },
     update,
     { runValidators: true },
-    { new: true }
+    { new: true },
   )
-    .then((user) => res.status(200).send(update))
+    .then(() => res.status(200).send(update))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         notFound400(res);
