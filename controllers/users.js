@@ -16,11 +16,7 @@ const notFound500 = (res) => {
 module.exports.getUsers = (req, res) => {
   User.find()
     .then((users) => {
-      if (users.length < 1) {
-        notFound404(res);
-      } else {
-        res.send({ data: users });
-      }
+      res.send({ data: users });
     })
     .catch(() => {
       notFound500(res);

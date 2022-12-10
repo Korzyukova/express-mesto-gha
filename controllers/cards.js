@@ -17,11 +17,7 @@ const notFound500 = (res) => {
 module.exports.getCards = (req, res) => {
   Card.find()
     .then((cards) => {
-      if (card.length < 1) {
-        notFound404(res);
-      } else {
-        res.send({ data: cards });
-      }
+      res.send({ data: cards });
     })
     .catch(() => {
       notFound500(res);
