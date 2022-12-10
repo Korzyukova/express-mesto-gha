@@ -2,59 +2,50 @@ const { default: mongoose } = require("mongoose");
 const card = require("../models/card");
 const Card = require("../models/card");
 
+const notFound404 = (res) => {
+  res.status(404).send({ message: "Пользователь с указанным _id не найден" });
+};
+const notFound400 = (res) => {
+  res.status(400).send({
+    message: "Переданы некорректные данные при создании карточки",
+  });
+};
+const notFound500 = (res) => {
+  res.status(500).send({ message: "Ошибка по умолчанию" });
+};
+
 module.exports.getCards = (req, res) => {
   Card.find()
     .then((cards) => {
       if (card.length < 1) {
-        res.status(404).send({ message: "Пользователь не найден" });
+        notFound404(res);
       }
-
       res.send({ data: cards });
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        res
-          .status(400)
-          .send({ message: "Запрашиваемый пользователь не найден" });
-      } else if (err.name === "CastError") {
-        res.status(404).send({
-          message: "Переданы некорректные данные при создании пользователя.",
-        });
-      } else {
-        res
-          .status(500)
-          .send({ message: "Запрашиваемый пользователь не найден" });
-      }
+      notFound500(res);
     });
 };
 
 module.exports.deleteCard = (req, res) => {
   const cardId = req.params.cardId;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    res.status(400).send({ message: "Запрашиваемый пользователь не найден" });
+    notFound400(res);
   }
   Card.deleteOne({
     _id: cardId,
   })
     .then((cards) => {
       if (cards.deletedCount === 0) {
-        res.status(404).send({ message: "Пользователь не найден" });
+        notFound404(res);
       }
       res.send({ data: cards });
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        res
-          .status(400)
-          .send({ message: "Запрашиваемый пользователь не найден" });
-      } else if (err.name === "CastError") {
-        res.status(404).send({
-          message: "Переданы некорректные данные при создании пользователя.",
-        });
+      if (err.name === "CastError") {
+        notFound400(res);
       } else {
-        res
-          .status(500)
-          .send({ message: "Запрашиваемый пользователь не найден" });
+        notFound500(res);
       }
     });
 };
@@ -65,17 +56,9 @@ module.exports.createCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        res
-          .status(400)
-          .send({ message: "Запрашиваемый пользователь не найден" });
-      } else if (err.name === "CastError") {
-        res.status(404).send({
-          message: "Переданы некорректные данные при создании пользователя.",
-        });
+        notFound400(res);
       } else {
-        res
-          .status(500)
-          .send({ message: "Запрашиваемый пользователь не найден" });
+        notFound500(res);
       }
     });
 };
@@ -83,7 +66,7 @@ module.exports.createCard = (req, res) => {
 module.exports.likeCard = (req, res) => {
   const cardId = req.params.cardId;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    res.status(400).send({ message: "Запрашиваемый пользователь не найден" });
+    notFound400(res);
   }
   Card.findByIdAndUpdate(
     cardId,
@@ -92,23 +75,15 @@ module.exports.likeCard = (req, res) => {
   )
     .then((cards) => {
       if (!cards) {
-        res.status(404).send({ message: "Пользователь не найден" });
+        notFound404(res);
       }
       res.send({ data: cards });
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        res
-          .status(400)
-          .send({ message: "Запрашиваемый пользователь не найден" });
-      } else if (err.name === "CastError") {
-        res.status(404).send({
-          message: "Переданы некорректные данные при создании пользователя.",
-        });
+      if (err.name === "CastError") {
+        notFound400(res);
       } else {
-        res
-          .status(500)
-          .send({ message: "Запрашиваемый пользователь не найден" });
+        notFound500(res);
       }
     });
 };
@@ -116,7 +91,7 @@ module.exports.likeCard = (req, res) => {
 module.exports.dislikeCard = (req, res) => {
   const cardId = req.params.cardId;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    res.status(400).send({ message: "Запрашиваемый пользователь не найден" });
+    notFound400(res);
   }
   Card.findByIdAndUpdate(
     cardId,
@@ -125,23 +100,15 @@ module.exports.dislikeCard = (req, res) => {
   )
     .then((cards) => {
       if (!cards) {
-        res.status(404).send({ message: "Пользователь не найден" });
+        notFound404(res);
       }
       res.send({ data: cards });
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        res
-          .status(400)
-          .send({ message: "Запрашиваемый пользователь не найден" });
-      } else if (err.name === "CastError") {
-        res.status(404).send({
-          message: "Переданы некорректные данные при создании пользователя.",
-        });
+      if (err.name === "CastError") {
+        notFound400(res);
       } else {
-        res
-          .status(500)
-          .send({ message: "Запрашиваемый пользователь не найден" });
+        notFound500(res);
       }
     });
 };

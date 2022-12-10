@@ -1,61 +1,51 @@
 const { default: mongoose } = require("mongoose");
 const User = require("../models/user");
 
+const notFound404 = (res) => {
+  res.status(404).send({ message: "Пользователь не найден" });
+};
+const notFound400 = (res) => {
+  res.status(400).send({
+    message: "Переданы некорректные данные при создании пользователя",
+  });
+};
+const notFound500 = (res) => {
+  res.status(500).send({ message: "Ошибка по умолчанию" });
+};
+
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => {
       if (users.length < 1) {
-        res.status(404).send({ message: "Пользователь не найден" });
+        notFound404(res);
       }
 
       res.send({ data: users });
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        res
-          .status(400)
-          .send({ message: "Запрашиваемый пользователь не найден" });
-      } else if (err.name === "CastError") {
-        res.status(404).send({
-          message: "Переданы некорректные данные при создании пользователя.",
-        });
-      } else {
-        res
-          .status(500)
-          .send({ message: "Запрашиваемый пользователь не найден" });
-      }
+      notFound500(res);
     });
 };
 
 module.exports.getUserId = (req, res) => {
   const userId = req.params.userId;
   if (!mongoose.Types.ObjectId.isValid(userId)) {
-    res.status(400).send({ message: "Запрашиваемый пользователь не найден" });
+    notFound400(res);
   }
-  User.find({
+  User.findById({
     _id: req.params.userId,
   })
     .then((users) => {
       if (users.length < 1) {
-        res
-          .status(404)
-          .send({ message: "Запрашиваемый пользователь не найден" });
+        notFound404(res);
       }
       res.send(users[0]);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        res
-          .status(400)
-          .send({ message: "Запрашиваемый пользователь не найден" });
-      } else if (err.name === "CastError") {
-        res.status(404).send({
-          message: "Переданы некорректные данные при создании пользователя.",
-        });
+      if (err.name === "CastError") {
+        notFound400(res);
       } else {
-        res
-          .status(500)
-          .send({ message: "Запрашиваемый пользователь не найден" });
+        notFound500(res);
       }
     });
 };
@@ -66,17 +56,9 @@ module.exports.createUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        res
-          .status(400)
-          .send({ message: "Запрашиваемый пользователь не найден" });
-      } else if (err.name === "CastError") {
-        res.status(404).send({
-          message: "Переданы некорректные данные при создании пользователя.",
-        });
+        notFound400(res);
       } else {
-        res
-          .status(500)
-          .send({ message: "Запрашиваемый пользователь не найден" });
+        notFound500(res);
       }
     });
 };
@@ -84,7 +66,7 @@ module.exports.createUser = (req, res) => {
 module.exports.updateUser = (req, res) => {
   const update = {};
 
-  const { name, about, avatar } = req.body;
+  const { name, about } = req.body;
 
   if (name) {
     update.name = name;
@@ -94,46 +76,35 @@ module.exports.updateUser = (req, res) => {
     update.about = about;
   }
 
-  if (avatar) {
-    update.avatar = avatar;
-  }
-
   User.updateOne({ _id: req.user._id }, update, { runValidators: true })
     .then((user) => res.send(update))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        res
-          .status(400)
-          .send({ message: "Запрашиваемый пользователь не найден" });
+        notFound400(res);
       } else if (err.name === "CastError") {
-        res.status(404).send({
-          message: "Переданы некорректные данные при создании пользователя.",
-        });
+        notFound400(res);
       } else {
-        res
-          .status(500)
-          .send({ message: "Запрашиваемый пользователь не найден" });
+        notFound500(res);
       }
     });
 };
 
 module.exports.updateUserAvatar = (req, res) => {
   const update = { avatar: req.body.avatar };
-  User.updateOne({ _id: req.user._id }, update, { runValidators: true })
+  User.updateOne(
+    { _id: req.user._id },
+    update,
+    { runValidators: true },
+    { new: true }
+  )
     .then((user) => res.status(200).send(update))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        res
-          .status(400)
-          .send({ message: "Запрашиваемый пользователь не найден" });
+        notFound400(res);
       } else if (err.name === "CastError") {
-        res.status(404).send({
-          message: "Переданы некорректные данные при создании пользователя.",
-        });
+        notFound400(res);
       } else {
-        res
-          .status(500)
-          .send({ message: "Запрашиваемый пользователь не найден" });
+        notFound500(res);
       }
     });
 };
