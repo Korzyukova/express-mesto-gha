@@ -17,21 +17,25 @@ app.use(express.json());
 
 //   next();
 // });
+// 1) Middleware
+app.use(auth);
 
+// 2) Routes
 app.use(routes);
+app.post('/signin', login);
+app.post('/signup', createUser);
+app.use('/cards', require('./routes/cards'));
+
+// 3) Catch All (404)
 app.all('*', (req, res) => {
   res.status(404).send({ message: 'Не найдено' });
 });
 
+// 4) Define port and start server
 const { PORT = 3000 } = process.env;
-
-app.post('/signin', login);
-app.post('/signup', createUser);
-app.use(auth);
-app.use('/cards', require('./routes/cards'));
-
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
 
+// Connect to database
 mongoose.connect('mongodb://localhost:27017/mestodb');

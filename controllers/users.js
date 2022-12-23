@@ -1,36 +1,42 @@
-const { default: mongoose } = require('mongoose');
-const { isEmail, isStrongPassword } = require('validator');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const { default: mongoose } = require("mongoose");
+const { isEmail, isStrongPassword } = require("validator");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
-const User = require('../models/user');
-const ErrorHandler = require('../middlewares/errorHandler');
+const User = require("../models/user");
+const ErrorHandler = require("../middlewares/errorHandler");
 
 module.exports.getUsers = (req, res) => {
   User.find()
     .then((users) => {
       res.send({ data: users });
     })
-    .catch(() => {
-      ErrorHandler(res, req);
+    .catch((err) => {
+      ErrorHandler(err, res);
     });
 };
 
 module.exports.getUserId = (req, res) => {
   const { userId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(userId)) {
-    ErrorHandler({
-      code: 400,
-    }, res);
+    ErrorHandler(
+      {
+        code: 400,
+      },
+      res,
+    );
   } else {
     User.findById({
       _id: userId,
     })
       .then((users) => {
         if (!users) {
-          ErrorHandler({
-            code: 404,
-          }, res);
+          ErrorHandler(
+            {
+              code: 404,
+            },
+            res
+          );
         } else {
           res.send(users);
         }
@@ -44,18 +50,24 @@ module.exports.getUserId = (req, res) => {
 module.exports.getMe = (req, res) => {
   const userId = req.user._id;
   if (!mongoose.Types.ObjectId.isValid(userId)) {
-    ErrorHandler({
-      code: 400,
-    }, res);
+    ErrorHandler(
+      {
+        code: 400,
+      },
+      res
+    );
   } else {
     User.findById({
       _id: userId,
     })
       .then((users) => {
         if (!users) {
-          ErrorHandler({
-            code: 404,
-          }, res);
+          ErrorHandler(
+            {
+              code: 404,
+            },
+            res
+          );
         } else {
           res.send(users);
         }
@@ -67,21 +79,21 @@ module.exports.getMe = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const {
-    name, about, avatar, email, password,
-  } = req.body;
+  const { name, about, avatar, email, password } = req.body;
   isEmail(email);
   isStrongPassword(password);
 
   bcrypt
     .hash(req.body.password, 10)
-    .then((hash) => User.create({
-      email,
-      name,
-      about,
-      avatar,
-      password: hash,
-    }))
+    .then((hash) =>
+      User.create({
+        email,
+        name,
+        about,
+        avatar,
+        password: hash,
+      })
+    )
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       ErrorHandler(err, res);
@@ -128,21 +140,28 @@ module.exports.updateUserAvatar = (req, res) => {
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
 
-  User.findOne({ email }).select('+password')
+  User.findOne({ email })
+    .select("+password")
     .then((user) => {
       if (!user) {
-        ErrorHandler({
-          code: 401,
-        }, res);
+        ErrorHandler(
+          {
+            code: 401,
+          },
+          res
+        );
       }
       const matched = bcrypt.compare(password, user.password);
       if (!matched) {
-        ErrorHandler({
-          code: 401,
-        }, res);
+        ErrorHandler(
+          {
+            code: 401,
+          },
+          res
+        );
       }
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
-        expiresIn: '7d',
+      const token = jwt.sign({ _id: user._id }, "some-secret-key", {
+        expiresIn: "7d",
       });
       res.send({ token });
     })
