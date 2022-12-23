@@ -6,9 +6,6 @@ const { celebrate, Joi, errors } = require('celebrate');
 const routes = require('./routes');
 const { createUser, login } = require('./controllers/users');
 
-const auth = require('./middlewares/auth');
-const ErrorHandler = require('./middlewares/errorHandler');
-
 const app = express();
 app.use(express.json());
 
