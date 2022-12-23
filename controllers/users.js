@@ -97,7 +97,7 @@ module.exports.createUser = (req, res) => {
     .then((user) => {
       const u = { ...user };
       delete u.password;
-      res.send({ data: user });
+      res.send({ data: u });
     })
     .catch((err) => {
       ErrorHandler(err, res);
