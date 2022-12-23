@@ -6,21 +6,6 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const ErrorHandler = require('../middlewares/errorHandler');
 
-const notFound404 = (res) => {
-  res.status(404).send({ message: 'Пользователь не найден' });
-};
-const notFound400 = (res) => {
-  res.status(400).send({
-    message: 'Переданы некорректные данные при создании пользователя',
-  });
-};
-const notFound500 = (res) => {
-  res.status(500).send({ message: 'Ошибка по умолчанию' });
-};
-const notFound401 = (res) => {
-  res.status(401).send({ message: 'Неправильные почта или пароль' });
-};
-
 module.exports.getUsers = (req, res) => {
   User.find()
     .then((users) => {
