@@ -11,7 +11,7 @@ const notFound500 = (res) => {
 };
 
 const notFound409 = (res) => {
-  res.status(409).send({ message: 'Такой пользователь уже существуетю' });
+  res.status(409).send({ message: 'Такой пользователь уже существует' });
 };
 
 const ErrorHandler = (err, res) => {
@@ -19,7 +19,7 @@ const ErrorHandler = (err, res) => {
     notFound400(res);
   } else if (err.code === 404) {
     notFound404(res);
-  } else if (err.code === 1100) {
+  } else if (err.code === 11000) {
     notFound409(res);
   } else {
     notFound500(res);

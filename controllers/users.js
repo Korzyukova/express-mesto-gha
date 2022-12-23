@@ -88,17 +88,22 @@ module.exports.createUser = (req, res) => {
 
   bcrypt
     .hash(req.body.password, 10)
-    .then((hash) => User.create({
-      email,
-      name,
-      about,
-      avatar,
-      password: hash,
-    }))
-    .then((user) => {
-      const u = { ...user };
-      delete u._doc.password;
-      res.send({ data: u._doc });
+    .then((hash) => {
+      User.create({
+        email,
+        name,
+        about,
+        avatar,
+        password: hash,
+      })
+        .then((user) => {
+          const u = { ...user };
+          delete u._doc.password;
+          res.send({ data: u._doc });
+        })
+        .catch((err) => {
+          ErrorHandler(err, res);
+        });
     })
     .catch((err) => {
       ErrorHandler(err, res);
