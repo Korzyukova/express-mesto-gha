@@ -50,6 +50,7 @@ module.exports.getUserId = (req, res) => {
 
 module.exports.getMe = (req, res) => {
   const userId = req.user._id;
+
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     ErrorHandler(
       {
