@@ -1,5 +1,10 @@
 const { default: mongoose } = require('mongoose');
+const { isEmail, isStrongPassword } = require('validator');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
 const User = require('../models/user');
+const ErrorHandler = require('../middlewares/errorHandler');
 
 const notFound404 = (res) => {
   res.status(404).send({ message: 'Пользователь не найден' });
@@ -12,6 +17,9 @@ const notFound400 = (res) => {
 const notFound500 = (res) => {
   res.status(500).send({ message: 'Ошибка по умолчанию' });
 };
+const notFound401 = (res) => {
+  res.status(401).send({ message: 'Неправильные почта или пароль' });
+};
 
 module.exports.getUsers = (req, res) => {
   User.find()
@@ -19,45 +27,79 @@ module.exports.getUsers = (req, res) => {
       res.send({ data: users });
     })
     .catch(() => {
-      notFound500(res);
+      ErrorHandler(res, req);
     });
 };
 
 module.exports.getUserId = (req, res) => {
   const { userId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(userId)) {
-    notFound400(res);
+    ErrorHandler({
+      code: 400,
+    }, res);
   } else {
     User.findById({
       _id: userId,
     })
       .then((users) => {
         if (!users) {
-          notFound404(res);
+          ErrorHandler({
+            code: 404,
+          }, res);
         } else {
           res.send(users);
         }
       })
       .catch((err) => {
-        if (err.name === 'CastError') {
-          notFound400(res);
+        ErrorHandler(err, res);
+      });
+  }
+};
+
+module.exports.getMe = (req, res) => {
+  const userId = req.user._id;
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    ErrorHandler({
+      code: 400,
+    }, res);
+  } else {
+    User.findById({
+      _id: userId,
+    })
+      .then((users) => {
+        if (!users) {
+          ErrorHandler({
+            code: 404,
+          }, res);
         } else {
-          notFound500(res);
+          res.send(users);
         }
+      })
+      .catch((err) => {
+        ErrorHandler(err, res);
       });
   }
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  isEmail(email);
+  isStrongPassword(password);
+
+  bcrypt
+    .hash(req.body.password, 10)
+    .then((hash) => User.create({
+      email,
+      name,
+      about,
+      avatar,
+      password: hash,
+    }))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        notFound400(res);
-      } else {
-        notFound500(res);
-      }
+      ErrorHandler(err, res);
     });
 };
 
@@ -74,34 +116,52 @@ module.exports.updateUser = (req, res) => {
     update.about = about;
   }
 
-  User.findOneAndUpdate({ _id: req.user._id }, update, { runValidators: true, new: true })
+  User.findOneAndUpdate({ _id: req.user._id }, update, {
+    runValidators: true,
+    new: true,
+  })
     .then(() => res.send(update))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        notFound400(res);
-      } else if (err.name === 'CastError') {
-        notFound400(res);
-      } else {
-        notFound500(res);
-      }
+      ErrorHandler(err, res);
     });
 };
 
 module.exports.updateUserAvatar = (req, res) => {
   const update = { avatar: req.body.avatar };
-  User.findOneAndUpdate(
-    { _id: req.user._id },
-    update,
-    { runValidators: true, new: true },
-  )
-    .then((data) => { res.send(data); })
+  User.findOneAndUpdate({ _id: req.user._id }, update, {
+    runValidators: true,
+    new: true,
+  })
+    .then((data) => {
+      res.send(data);
+    })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        notFound400(res);
-      } else if (err.name === 'CastError') {
-        notFound400(res);
-      } else {
-        notFound500(res);
+      ErrorHandler(err, res);
+    });
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  User.findOne({ email }).select('+password')
+    .then((user) => {
+      if (!user) {
+        ErrorHandler({
+          code: 401,
+        }, res);
       }
+      const matched = bcrypt.compare(password, user.password);
+      if (!matched) {
+        ErrorHandler({
+          code: 401,
+        }, res);
+      }
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
+        expiresIn: '7d',
+      });
+      res.send({ token });
+    })
+    .catch((err) => {
+      ErrorHandler(err, res);
     });
 };
