@@ -1,10 +1,10 @@
-const { default: mongoose } = require("mongoose");
-const { isEmail, isStrongPassword } = require("validator");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const { default: mongoose } = require('mongoose');
+const { isEmail, isStrongPassword } = require('validator');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
-const User = require("../models/user");
-const ErrorHandler = require("../middlewares/errorHandler");
+const User = require('../models/user');
+const ErrorHandler = require('../middlewares/errorHandler');
 
 module.exports.getUsers = (req, res) => {
   User.find()
@@ -35,7 +35,7 @@ module.exports.getUserId = (req, res) => {
             {
               code: 404,
             },
-            res
+            res,
           );
         } else {
           res.send(users);
@@ -54,7 +54,7 @@ module.exports.getMe = (req, res) => {
       {
         code: 400,
       },
-      res
+      res,
     );
   } else {
     User.findById({
@@ -66,7 +66,7 @@ module.exports.getMe = (req, res) => {
             {
               code: 404,
             },
-            res
+            res,
           );
         } else {
           res.send(users);
@@ -79,21 +79,21 @@ module.exports.getMe = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar, email, password } = req.body;
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
   isEmail(email);
   isStrongPassword(password);
 
   bcrypt
     .hash(req.body.password, 10)
-    .then((hash) =>
-      User.create({
-        email,
-        name,
-        about,
-        avatar,
-        password: hash,
-      })
-    )
+    .then((hash) => User.create({
+      email,
+      name,
+      about,
+      avatar,
+      password: hash,
+    }))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       ErrorHandler(err, res);
@@ -141,14 +141,14 @@ module.exports.login = (req, res) => {
   const { email, password } = req.body;
 
   User.findOne({ email })
-    .select("+password")
+    .select('+password')
     .then((user) => {
       if (!user) {
         ErrorHandler(
           {
             code: 401,
           },
-          res
+          res,
         );
       }
       const matched = bcrypt.compare(password, user.password);
@@ -157,11 +157,11 @@ module.exports.login = (req, res) => {
           {
             code: 401,
           },
-          res
+          res,
         );
       }
-      const token = jwt.sign({ _id: user._id }, "some-secret-key", {
-        expiresIn: "7d",
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
+        expiresIn: '7d',
       });
       res.send({ token });
     })
