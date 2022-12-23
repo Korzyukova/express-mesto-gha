@@ -152,7 +152,7 @@ module.exports.login = (req, res) => {
 
   User.findOne({ email })
     .select('+password')
-    .then((user) => {
+    .then(async (user) => {
       if (!user) {
         ErrorHandler(
           {
@@ -160,20 +160,22 @@ module.exports.login = (req, res) => {
           },
           res,
         );
+      } else {
+        const matched = await bcrypt.compare(password, user.password);
+        if (!matched) {
+          ErrorHandler(
+            {
+              code: 401,
+            },
+            res,
+          );
+        } else {
+          const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
+            expiresIn: '7d',
+          });
+          res.send({ token });
+        }
       }
-      const matched = bcrypt.compare(password, user.password);
-      if (!matched) {
-        ErrorHandler(
-          {
-            code: 401,
-          },
-          res,
-        );
-      }
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
-        expiresIn: '7d',
-      });
-      res.send({ token });
     })
     .catch((err) => {
       ErrorHandler(err, res);

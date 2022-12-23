@@ -6,6 +6,13 @@ const notFound400 = (res) => {
     message: 'Переданы некорректные данные при создании карточки',
   });
 };
+
+const notFound401 = (res) => {
+  res.status(401).send({
+    message: 'Пользователь не найден',
+  });
+};
+
 const notFound500 = (res) => {
   res.status(500).send({ message: 'Ошибка по умолчанию' });
 };
@@ -17,6 +24,8 @@ const notFound409 = (res) => {
 const ErrorHandler = (err, res) => {
   if (err.code === 400) {
     notFound400(res);
+  } else if (err.code === 401) {
+    notFound401(res);
   } else if (err.code === 404) {
     notFound404(res);
   } else if (err.code === 11000) {
