@@ -94,7 +94,11 @@ module.exports.createUser = (req, res) => {
       avatar,
       password: hash,
     }))
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+      const u = { ...user };
+      delete u.password;
+      res.send({ data: user });
+    })
     .catch((err) => {
       ErrorHandler(err, res);
     });
