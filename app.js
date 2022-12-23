@@ -1,11 +1,13 @@
 /* eslint-disable no-console */
 const express = require('express');
 const mongoose = require('mongoose');
+const { celebrate, Joi, errors } = require('celebrate');
 
 const routes = require('./routes');
 const { createUser, login } = require('./controllers/users');
 
 const auth = require('./middlewares/auth');
+const ErrorHandler = require('./middlewares/errorHandler');
 
 const app = express();
 app.use(express.json());
@@ -18,12 +20,25 @@ app.use(express.json());
 //   next();
 // });
 // 1) Middleware
-app.use(auth);
 
 // 2) Routes
 app.use(routes);
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    password: Joi.string().required(),
+    email: Joi.string().email().required().pattern(/^(|(([A-Za-z0-9]+_+)|([A-Za-z0-9]+-+)|([A-Za-z0-9]+\.+)|([A-Za-z0-9]+\++))*[A-Za-z0-9]+@((\w+-+)|(\w+\.))*\w{1,63}\.[a-zA-Z]{2,6})$/i),
+  }),
+}), login);
+app.post('/signup', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30),
+    password: Joi.string().required(),
+    email: Joi.string().email().required().pattern(/^(|(([A-Za-z0-9]+_+)|([A-Za-z0-9]+-+)|([A-Za-z0-9]+\.+)|([A-Za-z0-9]+\++))*[A-Za-z0-9]+@((\w+-+)|(\w+\.))*\w{1,63}\.[a-zA-Z]{2,6})$/i),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string(),
+  }),
+}), createUser);
+app.use(errors());
 app.use('/cards', require('./routes/cards'));
 
 // 3) Catch All (404)
