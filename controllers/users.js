@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 const { default: mongoose } = require('mongoose');
 const { isEmail, isStrongPassword } = require('validator');
 const bcrypt = require('bcryptjs');
@@ -96,8 +97,8 @@ module.exports.createUser = (req, res) => {
     }))
     .then((user) => {
       const u = { ...user };
-      delete u.password;
-      res.send({ data: u });
+      delete u._doc.password;
+      res.send({ data: u._doc });
     })
     .catch((err) => {
       ErrorHandler(err, res);
