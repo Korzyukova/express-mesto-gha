@@ -32,9 +32,9 @@ const ErrorHandler = (err, res) => {
     notFound400(res);
   } else if (err.code === 401) {
     notFound401(res);
-  } else if(err.code === 403) {
+  } else if (err.code === 403) {
     notFound403(res);
-  } if (err.code === 404) {
+  } else if (err.code === 404) {
     notFound404(res);
   } else if (err.code === 11000) {
     notFound409(res);
