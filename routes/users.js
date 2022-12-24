@@ -24,7 +24,11 @@ router.patch('/users/me', auth, celebrate({
 }), updateUser);
 router.patch('/users/me/avatar', auth, celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().pattern(/\.(gif|jpe?g|tiff?|png|webp|bmp)$/i).uri(),
+    avatar: Joi.string().pattern(/\.(gif|jpe?g|tiff?|png|webp|bmp)$/i).uri({
+      scheme: [
+        /https?/,
+      ],
+    }),
   }),
 }), updateUserAvatar);
 router.get('/users/:userId', auth, celebrate({
