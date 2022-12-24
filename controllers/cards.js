@@ -27,7 +27,7 @@ module.exports.deleteCard = (req, res) => {
       .then((cards) => {
         if (cards.deletedCount === 0) {
           ErrorHandler({
-            code: 404,
+            code: 403,
           }, res);
         } else {
           res.send({ data: cards });
