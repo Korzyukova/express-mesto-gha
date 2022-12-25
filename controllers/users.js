@@ -39,9 +39,9 @@ module.exports.getUserId = (req, res, next) => {
       .then((users) => {
         if (!users) {
           throw new NotFoundError404(errorMsg404);
-        } else {
-          res.send(users);
         }
+
+        res.send(users);
       })
       .catch(next);
   }
