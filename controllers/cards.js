@@ -1,24 +1,29 @@
 const { default: mongoose } = require('mongoose');
 const Card = require('../models/card');
-const ErrorHandler = require('../middlewares/errorHandler');
 
-module.exports.getCards = (req, res) => {
+const {
+  WrongDataError400,
+  NotFoundError404,
+  RemoveCardError403,
+} = require('../middlewares/errorHandlers');
+
+const errorMsg404 = 'Пользователь с указанным _id не найден';
+const errorMsg400 = "Переданы некорректные данные при создании пользователя'";
+const errorMsg403 = 'Удаление карточки другого пользователя';
+
+module.exports.getCards = (req, res, next) => {
   Card.find()
     .then((cards) => {
       res.send({ data: cards });
     })
-    .catch((err) => {
-      ErrorHandler(err, res);
-    });
+    .catch(next);
 };
 
-module.exports.deleteCard = (req, res) => {
+module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
   const userId = req.user._id;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    ErrorHandler({
-      code: 400,
-    }, res);
+    throw new WrongDataError400(errorMsg400);
   } else {
     Card.deleteOne({
       _id: cardId,
@@ -30,40 +35,30 @@ module.exports.deleteCard = (req, res) => {
             _id: cardId,
           }).then((c) => {
             if (c) {
-              ErrorHandler({
-                code: 403,
-              }, res);
+              throw new RemoveCardError403(errorMsg403);
             } else {
-              ErrorHandler({
-                code: 404,
-              }, res);
+              throw new NotFoundError404(errorMsg404);
             }
           });
         } else {
           res.send({ data: cards });
         }
       })
-      .catch((err) => {
-        ErrorHandler(err, res);
-      });
+      .catch(next);
   }
 };
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
     .then((data) => res.send({ data }))
-    .catch((err) => {
-      ErrorHandler(err, res);
-    });
+    .catch(next);
 };
 
-module.exports.likeCard = (req, res) => {
+module.exports.likeCard = (req, res, next) => {
   const { cardId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    ErrorHandler({
-      code: 400,
-    }, res);
+    throw new WrongDataError400(errorMsg400);
   } else {
     Card.findByIdAndUpdate(
       cardId,
@@ -72,25 +67,19 @@ module.exports.likeCard = (req, res) => {
     )
       .then((cards) => {
         if (!cards) {
-          ErrorHandler({
-            code: 404,
-          }, res);
+          throw new NotFoundError404(errorMsg404);
         } else {
           res.send({ data: cards });
         }
       })
-      .catch((err) => {
-        ErrorHandler(err, res);
-      });
+      .catch(next);
   }
 };
 
-module.exports.dislikeCard = (req, res) => {
+module.exports.dislikeCard = (req, res, next) => {
   const { cardId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    ErrorHandler({
-      code: 400,
-    }, res);
+    throw new WrongDataError400(errorMsg400);
   } else {
     Card.findByIdAndUpdate(
       cardId,
@@ -99,15 +88,11 @@ module.exports.dislikeCard = (req, res) => {
     )
       .then((cards) => {
         if (!cards) {
-          ErrorHandler({
-            code: 404,
-          }, res);
+          throw new NotFoundError404(errorMsg404);
         } else {
           res.send({ data: cards });
         }
       })
-      .catch((err) => {
-        ErrorHandler(err, res);
-      });
+      .catch(next);
   }
 };
