@@ -9,13 +9,13 @@ const {
   AuthorizationError401,
   WrongDataError400,
   NotFoundError404,
-  UserExistsError409,
+  // UserExistsError409,
 } = require('../middlewares/errorHandlers');
 
 const errorMsg404 = 'Пользователь с указанным _id не найден';
 const errorMsg401 = 'Ошибка авторизации';
 const errorMsg400 = "Переданы некорректные данные при создании пользователя'";
-const errorMsg409 = 'Такой пользователь уже существует';
+// const errorMsg409 = 'Такой пользователь уже существует';
 
 module.exports.getUsers = (req, res, next) => {
   User.find()
@@ -73,10 +73,11 @@ module.exports.createUser = async (req, res, next) => {
   } = req.body;
   isEmail(email);
   isStrongPassword(password);
+  /*
   const check = await User.findOne({
     email,
   }).catch(next);
-  /*
+
   if (check) {
     throw new UserExistsError409(errorMsg409);
   }
