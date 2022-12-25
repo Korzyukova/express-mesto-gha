@@ -88,11 +88,6 @@ module.exports.createUser = (req, res, next) => {
           const u = { ...user };
           delete u._doc.password;
           res.send({ data: u._doc });
-        })
-        .catch((err) => {
-          if (err.code === 11000) {
-            throw new UserExistsError409(errorMsg409);
-          }
         });
     })
     .catch(next);
