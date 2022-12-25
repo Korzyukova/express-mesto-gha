@@ -1,31 +1,32 @@
-const notFound404 = (res) => {
-  res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
-};
-const notFound400 = (res) => {
-  res.status(400).send({
-    message: 'Переданы некорректные данные при создании карточки',
-  });
-};
+// const notFound404 = (res) => {
+//   res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
+// };
 
-const notFound401 = (res) => {
-  res.status(401).send({
-    message: 'Пользователь не найден',
-  });
-};
+// const notFound400 = (res) => {
+//   res.status(400).send({
+//     message: 'Переданы некорректные данные при создании карточки',
+//   });
+// };
 
-const notFound403 = (res) => {
-  res.status(403).send({
-    message: 'Удаление карточки другого пользователя',
-  });
-};
+// const notFound401 = (res) => {
+//   res.status(401).send({
+//     message: 'Ошибка авторизации',
+//   });
+// };
 
-const notFound500 = (res) => {
-  res.status(500).send({ message: 'Ошибка по умолчанию' });
-};
+// const notFound403 = (res) => {
+//   res.status(403).send({
+//     message: 'Удаление карточки другого пользователя',
+//   });
+// };
 
-const notFound409 = (res) => {
-  res.status(409).send({ message: 'Такой пользователь уже существует' });
-};
+// const notFound500 = (res) => {
+//   res.status(500).send({ message: 'Ошибка по умолчанию' });
+// };
+
+// const notFound409 = (res) => {
+//   res.status(409).send({ message: 'Такой пользователь уже существует' });
+// };
 
 const ErrorHandler = (err, res) => {
   if (err.code === 400) {
