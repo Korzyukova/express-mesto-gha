@@ -1,5 +1,4 @@
 /* eslint-disable no-underscore-dangle */
-const { default: mongoose } = require('mongoose');
 const { isEmail, isStrongPassword } = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -7,14 +6,12 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const {
   AuthorizationError401,
-  WrongDataError400,
   NotFoundError404,
   UserExistsError409,
 } = require('../middlewares/errorHandlers');
 
 const errorMsg404 = 'Пользователь с указанным _id не найден';
 const errorMsg401 = 'Ошибка авторизации';
-const errorMsg400 = "Переданы некорректные данные при создании пользователя'";
 const errorMsg409 = 'Такой пользователь уже существует';
 
 module.exports.getUsers = (req, res, next) => {
@@ -30,41 +27,32 @@ module.exports.getUsers = (req, res, next) => {
 
 module.exports.getUserId = (req, res, next) => {
   const { userId } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
-    throw new WrongDataError400(errorMsg400);
-  } else {
-    User.findById({
-      _id: userId,
-    })
-      .then((users) => {
-        if (!users) {
-          throw new NotFoundError404(errorMsg404);
-        }
+  User.findById({
+    _id: userId,
+  })
+    .then((users) => {
+      if (!users) {
+        throw new NotFoundError404(errorMsg404);
+      }
 
-        res.send(users);
-      })
-      .catch(next);
-  }
+      res.send(users);
+    })
+    .catch(next);
 };
 
 module.exports.getMe = (req, res, next) => {
   const userId = req.user._id;
-
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
-    throw new WrongDataError400(errorMsg400);
-  } else {
-    User.findById({
-      _id: userId,
+  User.findById({
+    _id: userId,
+  })
+    .then((users) => {
+      if (!users) {
+        throw new NotFoundError404(errorMsg404);
+      } else {
+        res.send(users);
+      }
     })
-      .then((users) => {
-        if (!users) {
-          throw new NotFoundError404(errorMsg404);
-        } else {
-          res.send(users);
-        }
-      })
-      .catch(next);
-  }
+    .catch(next);
 };
 
 module.exports.createUser = async (req, res, next) => {
@@ -97,18 +85,8 @@ module.exports.createUser = async (req, res, next) => {
 };
 
 module.exports.updateUser = (req, res, next) => {
-  const update = {};
-
   const { name, about } = req.body;
-
-  if (name) {
-    update.name = name;
-  }
-
-  if (about) {
-    update.about = about;
-  }
-
+  const update = { name, about };
   User.findOneAndUpdate({ _id: req.user._id }, update, {
     runValidators: true,
     new: true,

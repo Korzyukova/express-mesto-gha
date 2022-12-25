@@ -9,19 +9,8 @@ const { createUser, login } = require('./controllers/users');
 const app = express();
 app.use(express.json());
 
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: '63915665826a3a9209886047',
-//   };
-
-//   next();
-// });
-// 1) Middleware
-
 // 2) Routes
 app.use(routes);
-
-app.use('/cards', require('./routes/cards'));
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -41,13 +30,11 @@ app.post('/signup', celebrate({
 app.use(errors());
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
-  // если у ошибки нет статуса, выставляем 500
   const { statusCode = 500, message } = err;
 
   res
     .status(statusCode)
     .send({
-      // проверяем статус и выставляем сообщение в зависимости от него
       message: statusCode === 500
         ? 'На сервере произошла ошибка'
         : message,

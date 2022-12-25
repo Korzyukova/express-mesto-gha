@@ -34,7 +34,7 @@ module.exports.deleteCard = (req, res, next) => {
           throw new NotFoundError404(errorMsg404);
         }
       } else {
-        res.send({ data: cards });
+        res.send({ data: true });
       }
     })
     .catch(next);

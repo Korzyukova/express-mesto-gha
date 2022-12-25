@@ -10,13 +10,18 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     required: true,
+    validate: {
+      validator: (v) => /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi.test(v),
+      message: (props) => `${props.value} is not a valid URL!`,
+    },
+
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
   likes: {
-    type: Array,
+    type: [mongoose.Schema.Types.ObjectId],
     default: [],
   },
   createdAt: {
