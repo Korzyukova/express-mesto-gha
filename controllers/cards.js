@@ -1,14 +1,11 @@
-const { default: mongoose } = require('mongoose');
 const Card = require('../models/card');
 
 const {
-  WrongDataError400,
   NotFoundError404,
   RemoveCardError403,
 } = require('../middlewares/errorHandlers');
 
-const errorMsg404 = 'Пользователь с указанным _id не найден';
-const errorMsg400 = "Переданы некорректные данные при создании пользователя'";
+const errorMsg404 = 'Карточка с указанным _id не найден';
 const errorMsg403 = 'Удаление карточки другого пользователя';
 
 module.exports.getCards = (req, res, next) => {
@@ -22,29 +19,25 @@ module.exports.getCards = (req, res, next) => {
 module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
   const userId = req.user._id;
-  if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    throw new WrongDataError400(errorMsg400);
-  } else {
-    Card.deleteOne({
-      _id: cardId,
-      owner: userId,
-    })
-      .then(async (cards) => {
-        if (cards.deletedCount === 0) {
-          const c = await Card.findOne({
-            _id: cardId,
-          });
-          if (c) {
-            throw new RemoveCardError403(errorMsg403);
-          } else {
-            throw new NotFoundError404(errorMsg404);
-          }
+  Card.deleteOne({
+    _id: cardId,
+    owner: userId,
+  })
+    .then(async (cards) => {
+      if (cards.deletedCount === 0) {
+        const c = await Card.findOne({
+          _id: cardId,
+        });
+        if (c) {
+          throw new RemoveCardError403(errorMsg403);
         } else {
-          res.send({ data: cards });
+          throw new NotFoundError404(errorMsg404);
         }
-      })
-      .catch(next);
-  }
+      } else {
+        res.send({ data: cards });
+      }
+    })
+    .catch(next);
 };
 
 module.exports.createCard = (req, res, next) => {
@@ -56,42 +49,34 @@ module.exports.createCard = (req, res, next) => {
 
 module.exports.likeCard = (req, res, next) => {
   const { cardId } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    throw new WrongDataError400(errorMsg400);
-  } else {
-    Card.findByIdAndUpdate(
-      cardId,
-      { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
-      { new: true },
-    )
-      .then((cards) => {
-        if (!cards) {
-          throw new NotFoundError404(errorMsg404);
-        } else {
-          res.send({ data: cards });
-        }
-      })
-      .catch(next);
-  }
+  Card.findByIdAndUpdate(
+    cardId,
+    { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
+    { new: true },
+  )
+    .then((cards) => {
+      if (!cards) {
+        throw new NotFoundError404(errorMsg404);
+      } else {
+        res.send({ data: cards });
+      }
+    })
+    .catch(next);
 };
 
 module.exports.dislikeCard = (req, res, next) => {
   const { cardId } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    throw new WrongDataError400(errorMsg400);
-  } else {
-    Card.findByIdAndUpdate(
-      cardId,
-      { $pull: { likes: req.user._id } }, // убрать _id из массива
-      { new: true },
-    )
-      .then((cards) => {
-        if (!cards) {
-          throw new NotFoundError404(errorMsg404);
-        } else {
-          res.send({ data: cards });
-        }
-      })
-      .catch(next);
-  }
+  Card.findByIdAndUpdate(
+    cardId,
+    { $pull: { likes: req.user._id } }, // убрать _id из массива
+    { new: true },
+  )
+    .then((cards) => {
+      if (!cards) {
+        throw new NotFoundError404(errorMsg404);
+      } else {
+        res.send({ data: cards });
+      }
+    })
+    .catch(next);
 };
