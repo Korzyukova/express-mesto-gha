@@ -76,11 +76,11 @@ module.exports.createUser = async (req, res, next) => {
   const check = await User.findOne({
     email,
   }).catch(next);
-
+  /*
   if (check) {
     throw new UserExistsError409(errorMsg409);
   }
-
+ */
   const hash = await bcrypt.hash(req.body.password, 10).catch(next);
   const user = await User.create({
     email,
