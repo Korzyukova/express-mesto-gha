@@ -29,17 +29,16 @@ module.exports.deleteCard = (req, res, next) => {
       _id: cardId,
       owner: userId,
     })
-      .then((cards) => {
+      .then(async (cards) => {
         if (cards.deletedCount === 0) {
-          Card.findOne({
+          const c = await Card.findOne({
             _id: cardId,
-          }).then((c) => {
-            if (c) {
-              throw new RemoveCardError403(errorMsg403);
-            } else {
-              throw new NotFoundError404(errorMsg404);
-            }
           });
+          if (c) {
+            throw new RemoveCardError403(errorMsg403);
+          } else {
+            throw new NotFoundError404(errorMsg404);
+          }
         } else {
           res.send({ data: cards });
         }
