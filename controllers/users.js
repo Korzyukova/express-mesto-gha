@@ -67,30 +67,31 @@ module.exports.getMe = (req, res, next) => {
   }
 };
 
-module.exports.createUser = (req, res, next) => {
+module.exports.createUser = async (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
   isEmail(email);
   isStrongPassword(password);
+  const check = await User.findOne({
+    email,
+  }).catch(next);
 
-  bcrypt
-    .hash(req.body.password, 10)
-    .then((hash) => {
-      User.create({
-        email,
-        name,
-        about,
-        avatar,
-        password: hash,
-      })
-        .then((user) => {
-          const u = { ...user };
-          delete u._doc.password;
-          res.send({ data: u._doc });
-        });
-    })
-    .catch(next);
+  if (check) {
+    throw new UserExistsError409(errorMsg409);
+  }
+
+  const hash = await bcrypt.hash(req.body.password, 10).catch(next);
+  const user = await User.create({
+    email,
+    name,
+    about,
+    avatar,
+    password: hash,
+  }).catch(next);
+  const u = { ...user };
+  delete u._doc.password;
+  res.send({ data: u._doc });
 };
 
 module.exports.updateUser = (req, res, next) => {
