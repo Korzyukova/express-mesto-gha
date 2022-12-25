@@ -93,7 +93,6 @@ module.exports.createUser = (req, res, next) => {
           if (err.code === 11000) {
             throw new UserExistsError409(errorMsg409);
           }
-          next();
         });
     })
     .catch(next);
