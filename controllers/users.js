@@ -1,5 +1,4 @@
 /* eslint-disable no-underscore-dangle */
-const { isEmail, isStrongPassword } = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
