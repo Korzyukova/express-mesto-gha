@@ -17,9 +17,6 @@ const errorMsg409 = 'Такой пользователь уже существу
 module.exports.getUsers = (req, res, next) => {
   User.find()
     .then((users) => {
-      if (!users) {
-        throw new NotFoundError404(errorMsg404);
-      }
       res.send({ data: users });
     })
     .catch(next);
@@ -59,8 +56,6 @@ module.exports.createUser = async (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-  isEmail(email);
-  isStrongPassword(password);
 
   await User.findOne({
     email,
@@ -71,7 +66,7 @@ module.exports.createUser = async (req, res, next) => {
   })
     .catch(next);
 
-  const hash = await bcrypt.hash(req.body.password, 10).catch(next);
+  const hash = await bcrypt.hash(password, 10).catch(next);
   const user = await User.create({
     email,
     name,
